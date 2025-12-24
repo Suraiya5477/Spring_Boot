@@ -5,10 +5,19 @@ import java.util.List;
 
 import com.mysql.cj.jdbc.Blob;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 
 public class Product {
+
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 
 
 
@@ -19,12 +28,18 @@ public class Product {
     private int inventory;
     private String brand; 
 
-
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "category_id")
     private Category category;
-    
 
+
+
+
+    
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL,orphanRemoval = true)  
     private List<Image> images;
 
+   
     public class Image {
 
         private Long id; 
@@ -42,6 +57,8 @@ public class Product {
 
 
         private Product product; 
+
+
 
 
 
