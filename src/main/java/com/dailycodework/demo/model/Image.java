@@ -1,6 +1,6 @@
 package com.dailycodework.demo.model;
 
-import com.mysql.cj.jdbc.Blob;
+import java.sql.Blob;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
