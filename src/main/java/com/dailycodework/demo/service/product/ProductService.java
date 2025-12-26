@@ -3,6 +3,7 @@ package com.dailycodework.demo.service.product;
 import org.springframework.stereotype.Service;
 
 import com.dailycodework.demo.model.Product;
+import com.dailycodework.demo.repository.ProductRepository;
 
 import lombok.RequiredArgsConstructor;
 import scala.collection.immutable.List;
@@ -14,7 +15,7 @@ import scala.collection.immutable.List;
 public class ProductService implements IProductService {
 
 
-    // private ProductRepository productRepository;
+    private ProductRepository productRepository;
 
     @Override
     public Product addProduct(Product product) {
