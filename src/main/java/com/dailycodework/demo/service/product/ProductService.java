@@ -2,20 +2,18 @@ package com.dailycodework.demo.service.product;
 
 import org.springframework.stereotype.Service;
 
+import com.dailycodework.demo.exceptions.ProductNotFoundException;
 import com.dailycodework.demo.model.Product;
 import com.dailycodework.demo.repository.ProductRepository;
 
 import lombok.RequiredArgsConstructor;
-import scala.collection.immutable.List;
-
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-
 public class ProductService implements IProductService {
 
-
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
     @Override
     public Product addProduct(Product product) {
@@ -25,14 +23,19 @@ public class ProductService implements IProductService {
 
     @Override
     public Product getProductById(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getProductById'");
+
+        return productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException("Product not found!"));
     }
 
     @Override
+
     public void deleteProduct(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteProduct'");
+
+        productRepository.findById(id).ifPresentOrElse(productRepository::delete, () -> {
+            throw new ProductNotFoundException("Product not found!");
+        });
+
     }
 
     @Override
@@ -49,14 +52,14 @@ public class ProductService implements IProductService {
 
     @Override
     public List<Product> getProductsByCategory(Long category) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getProductsByCategory'");
+
+        return productRepository.findByCategoryName(category);
     }
 
     @Override
     public List<Product> getProductsByBrand(String brand) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getProductsByBrand'");
+
+        return productRepository.findByBrand(brand);
     }
 
     @Override
@@ -83,8 +86,4 @@ public class ProductService implements IProductService {
         throw new UnsupportedOperationException("Unimplemented method 'countProductsByBrandAndName'");
     }
 
-
-
-
-    
 }
