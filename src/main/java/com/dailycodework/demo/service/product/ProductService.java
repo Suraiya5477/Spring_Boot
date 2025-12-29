@@ -3,22 +3,54 @@ package com.dailycodework.demo.service.product;
 import org.springframework.stereotype.Service;
 
 import com.dailycodework.demo.exceptions.ProductNotFoundException;
+import com.dailycodework.demo.model.Category;
 import com.dailycodework.demo.model.Product;
+import com.dailycodework.demo.repository.CategoryRepository;
 import com.dailycodework.demo.repository.ProductRepository;
+import com.dailycodework.demo.request.AddProductRequest;
 
 import lombok.RequiredArgsConstructor;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class ProductService implements IProductService {
 
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
 
     @Override
-    public Product addProduct(Product product) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addProduct'");
+    public Product addProduct(AddProductRequest request) {
+
+        // check if the category is found in the database; if not, create & save it
+        final String categoryName = Optional.ofNullable(request.getCategory())
+                .map(c -> c.getName())
+                .orElseThrow();
+
+        final Category category = categoryRepository.findByName(categoryName)
+                .orElseGet(() -> {
+                    final Category newCategory = new Category();
+                    newCategory.setName(categoryName);
+                    return categoryRepository.save(newCategory);
+                });
+
+        final Product product = createProduct(request, category);
+        return productRepository.save(product);
+
+        
+    }
+
+    private Product createProduct(AddProductRequest request, Category category) {
+
+        return new Product(
+                request.getName(),
+                request.getDescription(),
+                request.getPrice(),
+                request.getInventory(),
+                request.getBrand(),
+                category);
+
     }
 
     @Override
@@ -29,7 +61,6 @@ public class ProductService implements IProductService {
     }
 
     @Override
-
     public void deleteProduct(Long id) {
 
         productRepository.findById(id).ifPresentOrElse(productRepository::delete, () -> {
@@ -64,26 +95,28 @@ public class ProductService implements IProductService {
 
     @Override
     public List<Product> getProductsByCategoryAndBrand(String category, String brand) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getProductsByCategoryAndBrand'");
+
+        return productRepository.findByCategoryNameAndBrand(category, brand);
+
     }
 
     @Override
     public List<Product> getProductsByName(String name) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getProductsByName'");
+
+        return productRepository.findByName(name);
+
     }
 
     @Override
     public List<Product> getProductsByBrandAndName(String brand, String name) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getProductsByBrandAndName'");
+
+        return productRepository.findByBrandAndName(brand, name);
     }
 
     @Override
     public Long countProductsByBrandAndName(String brand, String name) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'countProductsByBrandAndName'");
-    }
 
+        return productRepository.countByBrandAndName(brand, name);
+
+    }
 }
