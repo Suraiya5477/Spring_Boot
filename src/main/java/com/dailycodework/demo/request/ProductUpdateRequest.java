@@ -8,14 +8,11 @@ import com.dailycodework.demo.model.Image;
 
 import lombok.Data;
 
-// import jakarta.persistence.CascadeType;
-// import jakarta.persistence.JoinColumn;
-// import jakarta.persistence.ManyToOne;
-// import jakarta.persistence.OneToMany;
+
 
 @Data
+public class ProductUpdateRequest {
 
-public class AddProductRequest {
 
     private Long id;
     private String name;
@@ -28,6 +25,13 @@ public class AddProductRequest {
        
         throw new UnsupportedOperationException("Unimplemented method 'getCategory'");
     }
+
+
+
+
+
+
+
 
 
 }

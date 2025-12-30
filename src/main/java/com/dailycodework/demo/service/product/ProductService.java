@@ -8,6 +8,7 @@ import com.dailycodework.demo.model.Product;
 import com.dailycodework.demo.repository.CategoryRepository;
 import com.dailycodework.demo.repository.ProductRepository;
 import com.dailycodework.demo.request.AddProductRequest;
+import com.dailycodework.demo.request.ProductUpdateRequest;
 
 import lombok.RequiredArgsConstructor;
 import java.util.List;
@@ -38,7 +39,6 @@ public class ProductService implements IProductService {
         final Product product = createProduct(request, category);
         return productRepository.save(product);
 
-        
     }
 
     private Product createProduct(AddProductRequest request, Category category) {
@@ -69,17 +69,46 @@ public class ProductService implements IProductService {
 
     }
 
-    @Override
-    public void updateProduct(Product product, Long productId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateProduct'");
-    }
+    // @Override
+    // public void updateProduct(Product product, Long productId) {
+
+    // }
 
     @Override
-    public List<Product> getAllProducts() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAllProducts'");
+    public Product updateProduct(ProductUpdateRequest request, Long productId) {
+
+        return productRepository.findById(productId)
+                .map(existingProduct -> {
+                    Product updatedProduct = updateExistingProduct(existingProduct, request);
+                    return productRepository.save(updatedProduct);
+                })
+                .orElseThrow(() -> new ProductNotFoundException("Product not found!"));
+
     }
+
+    
+
+    private Product updateExistingProduct(Product existingProduct, ProductUpdateRequest request) {
+
+        existingProduct.setName(request.getName());
+        existingProduct.setBrand(request.getBrand());
+        existingProduct.setDescription(request.getDescription());
+        existingProduct.setPrice(request.getPrice());
+        existingProduct.setInventory(request.getInventory());
+
+        Optional<Category> category = categoryRepository.findByName(request.getCategory().getName());
+        existingProduct.setCategory(category.orElse(null));
+
+        return existingProduct;
+
+    }
+
+    // @Override
+    // public List<Product> getAllProducts() {
+    // // TODO Auto-generated method stub
+    // throw new UnsupportedOperationException("Unimplemented method
+    // 'getAllProducts'");
+    // }
 
     @Override
     public List<Product> getProductsByCategory(Long category) {
@@ -119,4 +148,12 @@ public class ProductService implements IProductService {
         return productRepository.countByBrandAndName(brand, name);
 
     }
+
+    @Override
+    public List<Product> getAllProducts() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getAllProducts'");
+    }
+
+    
 }
